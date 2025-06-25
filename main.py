@@ -23,44 +23,31 @@ st.title("📈 Stock Market Forecast Dashboard")
 st.subheader("Historical Stock Price")
 st.line_chart(data['Close'])
 
-# model = ARIMA(data['Close'], order=(1, 1, 1))
-# model_fit = model.fit()
 
-# forecast_steps = 30
-# forecast_arima = model_fit.forecast(steps=forecast_steps)
+# ARIMA
+model = ARIMA(data['Close'], order=(1, 1, 1))
+model_fit = model.fit()
 
-# last_date = data.index[-1]
-# forecast_index = pd.date_range(start=last_date + pd.Timedelta(days=1), periods=forecast_steps, freq='D')
-# forecast_arima = pd.Series(forecast_arima.values, index=forecast_index)
-
-model_arima = ARIMA(data['Close'], order=(1, 1, 1))
-result_arima = model_arima.fit()
-forecast_arima = result_arima.forecast(steps=30)
+forecast_steps = 30
+forecast_arima = model_fit.forecast(steps=forecast_steps)
 
 
-# model = SARIMAX(
-#     data['Close'],
-#     order=(1, 1, 1),
-#     seasonal_order=(1, 1, 1, 12),
-#     enforce_stationarity=False,
-#     enforce_invertibility=False
-# )
-# model_fit = model.fit(disp=False)
 
-# forecast_steps = 30
-# forecast_sarima = model_fit.forecast(steps=forecast_steps)
+# SARIMAX
+model = SARIMAX(
+    data['Close'],
+    order=(1, 1, 1),
+    seasonal_order=(1, 1, 1, 12),
+    enforce_stationarity=False,
+    enforce_invertibility=False
+)
+model_fit = model.fit(disp=False)
 
-# last_date = data.index[-1]
-# forecast_index = pd.date_range(start=last_date + pd.Timedelta(days=1), periods=forecast_steps, freq='B')  # 'B' = business days
-# forecast_sarima = pd.Series(forecast_sarima.values, index=forecast_index)
+forecast_steps = 30
+forecast_sarima = model_fit.forecast(steps=forecast_steps)
 
 
-# 📏 SARIMA Forecast
-model_sarima = SARIMAX(data['Close'], order=(1, 1, 1), seasonal_order=(1, 1, 1, 12))
-result_sarima = model_sarima.fit()
-forecast_sarima = result_sarima.forecast(steps=30)
-
-
+# Dates
 df_prophet = data[['Close']].reset_index().rename(columns={'Date': 'ds', 'Close': 'y'})
 model_prophet = Prophet(daily_seasonality=True)
 model_prophet.fit(df_prophet)
@@ -106,53 +93,6 @@ future_dates = pd.date_range(start=last_date + pd.Timedelta(days=1), periods=30)
 lstm_forecast_df = pd.DataFrame({'Date': future_dates, 'LSTM_Predicted_Close': lstm_predictions_actual.flatten()})
 lstm_forecast_df.set_index('Date', inplace=True)
 
-# close_data = data[['Close']].values
-# scaler = MinMaxScaler()
-# scaled_data = scaler.fit_transform(close_data)
-
-# def create_sequences(data, window_size):
-#     X, y = [], []
-#     for i in range(window_size, len(data)):
-#         X.append(data[i-window_size:i, 0])
-#         y.append(data[i, 0])
-#     return np.array(X), np.array(y)
-
-# window_size = 60
-# X, y = create_sequences(scaled_data, window_size)
-
-# X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, shuffle=False)
-
-# X_train = X_train.reshape((X_train.shape[0], window_size, 1))
-# X_val = X_val.reshape((X_val.shape[0], window_size, 1))
-
-
-
-# model = Sequential()
-# model.add(LSTM(50, return_sequences=False, input_shape=(window_size, 1)))
-# model.add(Dense(1))
-# model.compile(optimizer='adam', loss='mean_squared_error')
-
-# model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=10, batch_size=32)
-
-
-# last_window = scaled_data[-window_size:]
-# future_predictions = []
-
-# for _ in range(30):
-#     input_seq = last_window.reshape((1, window_size, 1))
-#     next_pred = model.predict(input_seq, verbose=0)[0, 0]
-    
-#     future_predictions.append(next_pred)
-    
-#     last_window = np.append(last_window[1:], [[next_pred]], axis=0)
-
-# future_prices = scaler.inverse_transform(np.array(future_predictions).reshape(-1, 1))
-
-
-# from datetime import timedelta
-
-# last_date = data.index[-1]
-# future_dates = [last_date + timedelta(days=i) for i in range(1, 31)]
 
 
 st.subheader("ARIMA Forecast")
