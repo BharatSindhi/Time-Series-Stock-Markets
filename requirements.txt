@@ -8,3 +8,7 @@ plotly
 seaborn   
 prophet  
 streamlit
+yfinance
+plotly
+seaborn
+datetime

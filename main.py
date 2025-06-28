@@ -95,6 +95,8 @@ lstm_forecast_df.set_index('Date', inplace=True)
 
 
 
+
+
 st.subheader("ARIMA Forecast")
 st.line_chart(forecast_arima)
 
